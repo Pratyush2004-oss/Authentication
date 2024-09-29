@@ -1,6 +1,7 @@
 import { UserModel } from "../models/user.model.js";
 import bcrypt from 'bcryptjs'
 import { generateVerificationCode } from "../utils/generateVerificationCode.js";
+import { generateTokenandSetCookie } from "../utils/generateTokenandSetCookies.js";
 
 export const signUp = async (req, res) => {
     const { email, password, name } = req.body;
@@ -20,7 +21,7 @@ export const signUp = async (req, res) => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const verificationToken = generateVerificationCode();
-        const user = new UserModel.create({
+        const user = new UserModel({
             name,
             email,
             password: hashedPassword,
@@ -31,10 +32,16 @@ export const signUp = async (req, res) => {
         await user.save();
 
         // jwt token creation 
-        generateTokenandSetCookie(res,);
-
-
-
+        generateTokenandSetCookie(res,user.id);
+        return res.status(201).json({
+            message: "User created Successfully",
+            success: true,
+            user: {
+                ...user._doc,
+                password:undefined,
+            }
+        })
+        
     } catch (error) {
         console.log('Error in Signup Controller ' + error.message)
         return res.status(500).json({
