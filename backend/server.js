@@ -1,7 +1,8 @@
 import express from 'express'
-import { connectDB } from './databaseConn/db.js';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 
+import { connectDB } from './databaseConn/db.js';
 import authRoutes from './routes/auth.route.js'
 
 
@@ -14,8 +15,9 @@ app.get('/', (req,res) => {
 })
 
 app.use(express.json());        // allows us to parse incoming requests: req.body
+app.use(cookieParser());        // allows to access cookies which have been created
 
-app.use('/ap/auth',authRoutes)
+app.use('/api/auth',authRoutes)
 app.listen(PORT,()=>{
     connectDB();
     console.log(`Server is running in port ${PORT}`)
