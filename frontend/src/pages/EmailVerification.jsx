@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuthStore } from "../store/authStore";
+import { toast } from "react-toastify";
 
 const EmailVerificationPage = () => {
 	const [code, setCode] = useState(["", "", "", "", "", ""]);
-	const [loading, setLoading] = useState(false)
 	const inputRefs = useRef([]);
 	const navigate = useNavigate();
+
+	const {loading, error, verifyEmail} = useAuthStore();
 
 	const handleChange = (index, value) => {
 		const newCode = [...code];
@@ -39,10 +42,15 @@ const EmailVerificationPage = () => {
 		}
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		const verificationCode = code.join('');
-		alert(`Verification code submitted : ${verificationCode}`)
+		try {
+			await verifyEmail(verificationCode)
+			navigate('/');
+		} catch (error) {
+			
+		}
 	};
 
 	// autosubmit when all fields are filled

@@ -1,16 +1,25 @@
 import { KeyRound, Mail } from 'lucide-react';
 import React, { useState } from 'react'
-import {motion} from 'framer-motion'
-import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion'
+import { Link, useNavigate } from 'react-router-dom';
 import Input from '../components/Input';
+import { useAuthStore } from '../store/authStore';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading,setLoading] = useState(false);
+    const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const { loading, error, login } = useAuthStore();
+
+    const handleLogin = async (e) => {
         e.preventDefault();
+        try {
+            await login(email, password);
+            navigate('/');
+        } catch (error) {
+            console.log(error)
+        }
     }
     return (
         <motion.div
@@ -46,7 +55,7 @@ const Login = () => {
                         whileTap={{ scale: 0.98 }}
                         type='submit'
                     >
-                    {loading ? <span className='loading loading-infinity'></span> : 'Login'}
+                        {loading ? <span className='loading loading-infinity'></span> : 'Login'}
                     </motion.button>
                 </form>
             </div>

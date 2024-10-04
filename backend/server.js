@@ -1,5 +1,6 @@
 import express from 'express'
 import dotenv from 'dotenv';
+import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
 import { connectDB } from './databaseConn/db.js';
@@ -16,6 +17,10 @@ app.get('/', (req,res) => {
 
 app.use(express.json());        // allows us to parse incoming requests: req.body
 app.use(cookieParser());        // allows to access cookies which have been created
+
+app.use(cors({
+    origin:"http://localhost:5173", credentials:true
+}));
 
 app.use('/api/auth',authRoutes)
 app.listen(PORT,()=>{

@@ -2,18 +2,30 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import Input from '../components/Input';
 import { KeyRound, Mail, User } from 'lucide-react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PasswordStrengthMeter from '../components/PAsswordStrengthMeter';
+import { useAuthStore } from '../store/authStore';
+import { toast } from 'react-toastify';
 
 const Signup = () => {
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loading,setLoading] = useState(false);
 
-    const handleSignup = (e) => {
+    const navigate = useNavigate();
+    const { signup, error, loading } = useAuthStore();
+
+    const handleSignup = async (e) => {
         e.preventDefault();
+
+        try {
+            await signup(email, password, name);
+            navigate('/verify-email');
+        } catch (error) {
+            console.log(error)
+        }
+
     }
     return (
         <motion.div
@@ -49,23 +61,24 @@ const Signup = () => {
                     />
 
                     {/* Password strength meter */}
-                    <PasswordStrengthMeter password={password}/>
-                    
+                    <PasswordStrengthMeter password={password} />
+
                     <motion.button
                         className='w-full px-4 py-3 mt-5 font-bold text-white transition duration-200 rounded-lg shadow-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-900'
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         type='submit'
+                        disabled={loading}
                     >
-                    {loading ? <span className='loading loading-bars'></span> : 'Sign Up'}
+                        {loading ? <span className='loading loading-bars'></span> : 'Sign Up'}
                     </motion.button>
-                    </form>
-                    </div>
-                    <div className='flex justify-center px-8 py-4 bg-gray-900 bg-opacity-50'>
-                        <p className='text-sm text-gray-400'>Already have an account? {""}
-                            <Link to={'/login'}><span className='font-bold text-green-400 hover:underline'>Login</span></Link>
-                        </p>
-                    </div>
+                </form>
+            </div>
+            <div className='flex justify-center px-8 py-4 bg-gray-900 bg-opacity-50'>
+                <p className='text-sm text-gray-400'>Already have an account? {""}
+                    <Link to={'/login'}><span className='font-bold text-green-400 hover:underline'>Login</span></Link>
+                </p>
+            </div>
 
         </motion.div>
     )
