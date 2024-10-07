@@ -5,7 +5,6 @@ import { generateVerificationCode } from "../utils/generateVerificationCode.js";
 import { generateTokenandSetCookie } from "../utils/generateTokenandSetCookies.js";
 import { sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/emails.js";
 import { UserModel } from "../models/user.model.js";
-import { resolveSoa } from 'dns';
 
 // SignUp Controller
 export const signUp = async (req, res) => {
@@ -196,7 +195,7 @@ export const resetPassword = async (req, res) => {
         await sendResetSuccessEmail(user.email);
 
         res.status(201).json({
-            message: "Password reset successfully",
+            message: "Password reset successfully. Redirecting to Login Page...",
             success: true
         })
 
